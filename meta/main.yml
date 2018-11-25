@@ -1,0 +1,39 @@
+
+galaxy_info:
+  author: dankempster
+  description: Installs Docker with the get.docker.com script and creates self-signed certs for security
+
+  license: MIT
+
+  min_ansible_version: 1.4
+
+  platforms:
+    - name: CentOS
+      versions:
+        - 7
+    - name: Debian
+      versions:
+        - jessie
+        - stretch
+        - buster
+    - name: Fedora
+      versions:
+        - 26
+        - 27
+        - 28
+    - name: Raspbian
+      versions:
+        - jessie
+        - stretch
+    - name: Ubuntu
+      versions:
+        - trusty
+        - xenial
+        - bionic
+        - artful
+
+  galaxy_tags:
+    - "developemtn"
+    - "system"
+
+dependencies: []

@@ -1,0 +1,29 @@
+---
+# Service options.
+docker_service_state: started
+docker_service_enabled: yes
+docker_restart_handler_state: restarted
+
+# Docker Compose options.
+docker_install_compose: true
+docker_compose_version: "1.22.0"
+docker_compose_path: /usr/local/bin/docker-compose
+
+# A list of users who will be added to the docker group.
+docker_users: []
+# whether to make the current user a docker user
+docker_me_as_docker_user: true
+
+
+# Docker public network
+docker_public_network_interface: eth0
+
+# Secure Docker
+docker_generate_certs: false
+docker_client_ca: ""
+docker_client_cert: ""
+docker_client_cert_key: ""
+
+# Support Ansible control of docker
+# Requires pip to be installed, see geerlinguy.pip role
+docker_support_ansible: true

@@ -1,0 +1,9 @@
+---
+- name: ansible | ensure docker-py is installed
+  become: true
+  pip:
+    name: docker-py
+    state: present
+
+- name: ansible | ensure docker-compose is available
+  import_tasks: compose.yml

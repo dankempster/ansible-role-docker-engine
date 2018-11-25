@@ -1,0 +1,24 @@
+##
+# Author: Dan Kempster
+# License: MIT - provided at end of file
+# 
+---
+- import_tasks: get-docker.yml
+
+- name: main | Secure Docker with certificates
+  become: true
+  import_tasks: "certs.yml"
+  notify:
+    - "restart docker"
+  when: docker_generate_certs
+
+- name: "main : ensure Docker users are configured"
+  include_tasks: users.yml
+
+- name: "main : ensure support for anisble docker modules"
+  include_tasks: ansible.yml
+  when: docker_support_ansible
+
+- name: "main | ensure docker-compose is installed"
+  include_tasks: compose.yml
+  when: docker_install_compose

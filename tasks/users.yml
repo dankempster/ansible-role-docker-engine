@@ -1,0 +1,17 @@
+---
+- name: docker user | ensure users are added to the docker group.
+  become: true
+  user:
+    name: "{{ item }}"
+    group: docker
+    append: yes
+  with_items: "{{ docker_users }}"
+
+- name: "docker user | ensure I am added to the docker group"
+  become: true
+  user:
+    name: "{{ ansible_user_gecos }}"
+    append: true
+    groups: [ docker ]
+    state: present
+  when: docker_me_as_docker_user

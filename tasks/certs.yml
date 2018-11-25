@@ -1,0 +1,102 @@
+##
+# Author: Kirill Sumorokov
+# License: MIT - provided at end of file
+# Source: https://github.com/clayman74/ansible-docker
+# Commit: 23d23a7
+# Date: 2018-06-09
+# 
+---
+
+# - name: docker certs | generate CA key
+#   command: openssl genrsa -aes256 -out ca-key.pem 4096
+#     chdir: /etc/docker
+#     creates: "ca-key.pem"
+#     chmod: 0600
+
+# - name: docker certs | generate CA cert
+#   command:  openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
+#     chdir: /etc/docker
+#     creates: "ca.pem"
+#     chmod: 0600
+
+# - name: docker certs | generate Server key
+#   command: openssl genrsa -out server-key.pem 4096
+#     chdir: /etc/docker
+#     creates: "server-key.pem"
+
+# - name: docker certs | generate Server CSR
+#   command: openssl req -subj "/CN={{ ansible_hostname }}" -sha256 -new -key server-key.pem -out server.csr
+#     chdir: /etc/docker
+#     creates: "server.csr"
+
+# - name: docker certs | generate extfile.cnf
+#   command: echo subjectAltName = DNS:{{ ansible_hostname }},IP:{{ docker_public_network_address }},IP:127.0.0.1 >> extfile.cnf
+#     chdir: /etc/docker
+
+# - name: docker certs | generate extfile.cnf
+#   command: echo extendedKeyUsage = serverAuth >> extfile.cnf
+#     chdir: /etc/docker
+
+# - name: docker certs | generate signed certificate
+#   command: openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+#     chdir: /etc/docker
+
+
+- name: Certs | Generate private keys
+  shell: openssl genrsa -out {{ item }}.pem 4096 chdir=/etc/docker creates={{ item }}.pem
+  with_items:
+    - ca-key
+    - server-key
+    - client-key
+
+- name: Certs | Generate CA public key
+  shell: openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem -subj "/CN={{ inventory_hostname }}" chdir=/etc/docker creates=ca.pem
+
+- name: Certs | Generate server csr
+  shell: openssl req -subj "/CN={{ inventory_hostname }}" -sha256 -new -key server-key.pem -out server.csr chdir=/etc/docker creates=server.csr
+
+- name: Certs | Prepare extfile for certificate generation
+  shell: echo subjectAltName = DNS:{{ inventory_hostname }},IP:{{ docker_public_network_address }},IP:127.0.0.1 > extfile.cnf chdir=/etc/docker creates=extfile.cnf
+
+- name: Certs | Generate server certificate
+  shell: openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server.pem -extfile extfile.cnf chdir=/etc/docker creates=server.pem
+
+- name: Certs | Generate client csr
+  shell: openssl req -subj "/CN=client" -new -key client-key.pem -out client.csr chdir=/etc/docker creates=client.csr
+
+- name: Certs | Prepare extfile for certificate generation
+  shell: echo extendedKeyUsage = clientAuth > extfile.cnf chdir=/etc/docker
+
+- name: Certs | Generate client certificate
+  shell: openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out client.pem -extfile extfile.cnf chdir=/etc/docker creates=client.pem
+
+- name: Certs | Fetch client certificates
+  fetch: src=/etc/docker/{{ item }} dest=certs/docker/{{ inventory_hostname }}/{{ item }} flat=yes
+  with_items:
+    - ca.pem
+    - client-key.pem
+    - client.pem
+
+#
+# MIT License
+#
+# Copyright (c) 2016 Kirill Sumorokov
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+# 

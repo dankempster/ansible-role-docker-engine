@@ -1,0 +1,12 @@
+---
+- name: main | Set Docker engine facts
+  set_fact:
+    docker_public_network_address: "{{ vars['ansible_' + docker_public_network_interface]['ipv4']['address'] }}"
+
+- name: main | Set Docker client cert facts
+  set_fact:
+    docker_client_ca: certs/docker/{{ inventory_hostname }}/ca.pem
+    docker_client_cert: certs/docker/{{ inventory_hostname }}/client.pem
+    docker_client_cert_key: certs/docker/{{ inventory_hostname }}/client-key.pem
+  when: docker_generate_certs
+
