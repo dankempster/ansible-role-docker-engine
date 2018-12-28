@@ -22,6 +22,8 @@ This role requires Ansible 2.0 or above. See [requirments](./meta/requirements.t
 
 [DanKempster](https://github.com/dankempster)
 
-Special thanks to [clayman74](https://github.com/clayman74) and
+Special thank to [Jeff Geerling](https://github.com/geerlingguy) where I copied a lot.
+
+Thanks to [clayman74](https://github.com/clayman74) and
 [ansible-docker](https://github.com/clayman74/ansible-docker) where
 I copied [certs.yml](./tasks/certs.yml) from.
