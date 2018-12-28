@@ -3,7 +3,11 @@
 # License: MIT - provided at end of file
 #
 ---
-- import_tasks: get-docker.yml
+- include_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
 
 - name: main | Secure Docker with certificates
   become: true
