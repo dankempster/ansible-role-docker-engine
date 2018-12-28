@@ -1,7 +1,7 @@
 ---
 # Service options.
 docker_service_state: started
-docker_service_enabled: yes
+docker_service_enabled: true
 docker_restart_handler_state: restarted
 
 # Docker Compose options.

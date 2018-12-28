@@ -12,4 +12,3 @@
 
 - name: "get-docker | ensure docker is up to date"
   command: /usr/bin/get-docker.sh
-  

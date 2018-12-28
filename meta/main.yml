@@ -1,7 +1,8 @@
-
+---
 galaxy_info:
   author: dankempster
-  description: Installs Docker with the get.docker.com script and creates self-signed certs for security
+  description: 'Installs Docker with the get.docker.com script and creates
+    self-signed certs for security'
 
   license: MIT
 

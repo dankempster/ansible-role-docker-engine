@@ -4,7 +4,7 @@
 # Source: https://github.com/clayman74/ansible-docker
 # Commit: 23d23a7
 # Date: 2018-06-09
-# 
+#
 ---
 
 # - name: docker certs | generate CA key
@@ -77,11 +77,12 @@
     - client-key.pem
     - client.pem
 
+# yamllint disable
 #
 # MIT License
 #
 # Copyright (c) 2016 Kirill Sumorokov
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
