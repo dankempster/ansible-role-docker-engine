@@ -1,7 +1,7 @@
 ##
 # Author: Dan Kempster
 # License: MIT - provided at end of file
-# 
+#
 ---
 - import_tasks: get-docker.yml
 
