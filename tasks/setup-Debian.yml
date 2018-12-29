@@ -14,9 +14,6 @@
       - gnupg
     state: present
 
-- debug:
-    var: ansible_lsb
-
 - name: Add Docker apt key.
   apt_key:
     url: "https://download.docker.com/linux/\
