@@ -6,7 +6,7 @@ driver:
 lint:
   name: yamllint
   options:
-    config-file: molecule/default/yaml-lint.yml
+    config-file: molecule/yamllint.yml
 platforms:
   - name: "${MOLECULE_DISTRO:-debian9}"
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-debian9}-ansible:latest"
