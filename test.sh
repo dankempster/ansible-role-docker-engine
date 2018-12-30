@@ -1,4 +1,4 @@
 #!/bin/bash
 
-molecule -e molecule/debian_vars.txt test
-molecule -e molecule/centos_vars.txt test
+molecule -e molecule/centos7_env.yml test && \
+molecule -e molecule/debian9_env.yml test
