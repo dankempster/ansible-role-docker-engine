@@ -10,7 +10,7 @@
 - name: "docker user | ensure I am added to the docker group"
   become: true
   user:
-    name: "{{ ansible_user_gecos }}"
+    name: "{{ ansible_user }}"
     append: true
     groups: [docker]
     state: present
