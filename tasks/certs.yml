@@ -43,6 +43,7 @@
 
 
 - name: Certs | Generate private keys
+  become: true
   shell: openssl genrsa -out {{ item }}.pem 4096 chdir=/etc/docker creates={{ item }}.pem
   with_items:
     - ca-key
@@ -50,27 +51,35 @@
     - client-key
 
 - name: Certs | Generate CA public key
+  become: true
   shell: openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem -subj "/CN={{ inventory_hostname }}" chdir=/etc/docker creates=ca.pem
 
 - name: Certs | Generate server csr
+  become: true
   shell: openssl req -subj "/CN={{ inventory_hostname }}" -sha256 -new -key server-key.pem -out server.csr chdir=/etc/docker creates=server.csr
 
 - name: Certs | Prepare extfile for certificate generation
+  become: true
   shell: echo subjectAltName = DNS:{{ inventory_hostname }},IP:{{ docker_public_network_address }},IP:127.0.0.1 > extfile.cnf chdir=/etc/docker creates=extfile.cnf
 
 - name: Certs | Generate server certificate
+  become: true
   shell: openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server.pem -extfile extfile.cnf chdir=/etc/docker creates=server.pem
 
 - name: Certs | Generate client csr
+  become: true
   shell: openssl req -subj "/CN=client" -new -key client-key.pem -out client.csr chdir=/etc/docker creates=client.csr
 
 - name: Certs | Prepare extfile for certificate generation
+  become: true
   shell: echo extendedKeyUsage = clientAuth > extfile.cnf chdir=/etc/docker
 
 - name: Certs | Generate client certificate
+  become: true
   shell: openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out client.pem -extfile extfile.cnf chdir=/etc/docker creates=client.pem
 
 - name: Certs | Fetch client certificates
+  become: true
   fetch: src=/etc/docker/{{ item }} dest=certs/docker/{{ inventory_hostname }}/{{ item }} flat=yes
   with_items:
     - ca.pem
