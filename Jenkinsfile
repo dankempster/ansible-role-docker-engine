@@ -12,41 +12,110 @@ pipeline {
   //   label 'Molecule_Slave'
   // }
 
-  agent any
+  agent none
 
   stages {
 
     stage ('Get latest code') {
-      steps {
-        checkout scm
+      parallel {
+        
+        stage('Get latest code (x86_64)') {
+          agent {
+            label 'x86_64'
+          }
+          steps {
+            checkout scm
+          }
+        }
+
+        stage('Get latest code (R-Pi 3)') {
+          agent {
+            label 'raspberrypi_3'
+          }
+          steps {
+            checkout scm
+          }
+        }
+
       }
     }
 
     stage ('Setup Python virtual environment') {
-      steps {
-        sh '''
-          virtualenv virtenv
-          source virtenv/bin/activate
-          pip install --upgrade ansible molecule docker jmespath
-        '''
+      parallel {
+
+        stage('Setup Python VirtEnv (x86_64)') {
+          agent {
+            label 'x86_64'
+          }
+          steps {
+            sh '''
+              virtualenv virtenv
+              source virtenv/bin/activate
+              pip install --upgrade ansible molecule docker jmespath
+            '''
+          }          
+        }
+
+        stage('Setup Python VirtEnv (R-Pi 3)') {
+          agent {
+            label 'raspberrypi_3'
+          }
+          steps {
+            sh '''
+              virtualenv virtenv
+              source virtenv/bin/activate
+              pip install --upgrade ansible molecule docker jmespath
+            '''
+          }
+        }
+
       }
     }
 
     stage ('Display versions') {
-      steps {
-        sh '''
-          source virtenv/bin/activate
+      parallel {
 
-          docker -v
-          python -V
-          echo $PATH
-          ansible --version
-          molecule --version
-        '''
+        stage('Display versions (x86_64)') {
+          agent {
+            label 'x86_64'
+          }
+          steps {
+            sh '''
+              source virtenv/bin/activate
+
+              docker -v
+              python -V
+              echo $PATH
+              ansible --version
+              molecule --version
+            '''
+          }         
+        }
+
+        stage('Display versions (R-Pi 3)') {
+          agent {
+            label 'raspberrypi_3'
+          }
+          steps {
+            sh '''
+              source virtenv/bin/activate
+
+              docker -v
+              python -V
+              echo $PATH
+              ansible --version
+              molecule --version
+            '''
+          }
+        }
+
       }
     }
 
-    stage ('Debian 9 test') {
+    stage ('Debian 9 test (x86_64)') {
+      agent {
+        label 'x86_64'
+      }
       steps {
         sh '''
           source virtenv/bin/activate
@@ -56,12 +125,28 @@ pipeline {
       }
     }
 
-    stage ('CentOS 7 test') {
+    stage ('CentOS 7 test (x86_64)') {
+      agent {
+        label 'x86_64'
+      }
       steps {
         sh '''
           source virtenv/bin/activate
           
           molecule -e molecule/centos7_env.yml test
+        '''
+      }
+    }
+
+    stage ('Raspbian stretch test (R-Pi 3)') {
+      agent {
+        label 'raspberrypi_3'
+      }
+      steps {
+        sh '''
+          source virtenv/bin/activate
+          
+          molecule -e molecule/raspbian_stretch_env.yml test
         '''
       }
     }

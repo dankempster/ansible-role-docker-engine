@@ -1,2 +1,2 @@
 ---
-MOLECULE_DISTRO: centos7
+MOLECULE_IMAGE: gerrlingguy/docker-centos7-ansible
