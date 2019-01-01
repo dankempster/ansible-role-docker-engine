@@ -10,6 +10,7 @@
   when: ansible_os_family == 'Debian'
 
 - name: Install Docker.
+  become: true
   package:
     name: "{{ docker_package }}"
     state: "{{ docker_package_state }}"
@@ -20,7 +21,6 @@
   when: ansible_service_mgr == 'systemd'
 
 - name: main | Secure Docker with certificates
-  become: true
   import_tasks: "certs.yml"
   notify:
     - "restart docker"
