@@ -43,7 +43,7 @@ pipeline {
           }          
         }
 
-        stage('Setup Python VirtEnv (R-Pi 3)') {
+        stage('Raspbian Stretch') {
           agent {
             label 'raspberrypi_3'
           }
@@ -54,6 +54,21 @@ pipeline {
               pip install --upgrade ansible molecule docker jmespath
           
               molecule -e molecule/raspbian_stretch_env.yml test
+            '''
+          }
+        }
+
+        stage('Raspbian Jessie') {
+          agent {
+            label 'raspberrypi_3'
+          }
+          steps {
+            sh '''
+              virtualenv virtenv
+              source virtenv/bin/activate
+              pip install --upgrade ansible molecule docker jmespath
+          
+              molecule -e molecule/raspbian_jessie_env.yml test
             '''
           }
         }
